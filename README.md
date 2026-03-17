@@ -14,6 +14,19 @@ This repository ships two standalone implementations that detect the current env
   - Python implementation.
   - Requires Python 3.7+.
 
+## Built-In Coverage
+
+The default detector now covers mainstream development toolchains out of the box, including:
+
+- Source control and core runtimes
+  - Git, Java, `javac`, Maven, Gradle, Node.js, npm, pnpm, Yarn, Python
+- Systems and compiled languages
+  - Go, Rust (`rustc`, Cargo, Rustup), Clang, Clang++, GCC, G++, CMake, Make, Ninja
+- Other common developer tooling
+  - Ruby, RubyGems, Bundler, PHP, Composer, .NET SDK, Docker, kubectl
+- Important environment variables
+  - `JAVA_HOME`, `MAVEN_HOME`, `GRADLE_HOME`, `GOROOT`, `GOPATH`, `CARGO_HOME`, `RUSTUP_HOME`, `NVM_DIR`, `PYENV_ROOT`, `RBENV_ROOT`, `SDKMAN_DIR`, `HOMEBREW_PREFIX`, `VIRTUAL_ENV`, `GEM_HOME`, `BUNDLE_PATH`, `COMPOSER_HOME`, `DOTNET_ROOT`, `CC`, `CXX`
+
 ## Outputs
 
 - `environment-baseline.json`
@@ -135,10 +148,10 @@ python3 scripts/render_environment_docs.py ./environment-baseline.json \
 
 ## Extending Detection
 
-Use a probe file when you need to inspect additional tools or non-default environment elements.
+Use a probe file when you need to inspect additional tools or non-default environment elements that are not already covered by the built-in detector.
 Examples include:
 
-- Docker or Gradle installation checks
+- service-specific or project-specific checks
 - PostgreSQL, Redis, or MySQL service checks
 - startup files or project-specific toolchains
 
@@ -146,14 +159,14 @@ See [references/probe-file.md](./references/probe-file.md) for the JSON schema a
 
 ## Compatibility And Current Verification
 
-Current verification covered the Windows workflow and confirmed that both implementations run successfully there.
+Current verification covered the Windows, macOS, and Linux workflows and confirmed that both implementations run successfully on those verified paths.
 
 | OS | Script type | Verified | Notes |
 | --- | --- | --- | --- |
 | Windows | JavaScript | Yes | Verified end-to-end in a Windows environment. |
 | Windows | Python | Yes | Verified end-to-end with Python 3.7+ in a Windows environment. |
-| macOS | JavaScript | Not yet | Intended support, but no macOS runtime verification was performed. |
-| macOS | Python | Not yet | Intended support; requires Python 3.7+. |
+| macOS | JavaScript | Yes | Verified end-to-end on macOS 26.2 (Apple silicon) with Node.js 24.14.0 on March 17, 2026. |
+| macOS | Python | Yes | Verified end-to-end on macOS 26.2 (Apple silicon) with Python 3.9.6 on March 17, 2026. |
 | Linux | JavaScript | Yes | Verified end-to-end on Ubuntu 22.04 with Node.js 20. |
 | Linux | Python | Yes | Verified end-to-end on Ubuntu 22.04 with Python 3.10. |
 

@@ -11,7 +11,37 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-DEFAULT_TOOL_ORDER = ["git", "java", "maven", "node", "npm", "python"]
+DEFAULT_TOOL_ORDER = [
+    "git",
+    "java",
+    "javac",
+    "maven",
+    "gradle",
+    "node",
+    "npm",
+    "pnpm",
+    "yarn",
+    "python",
+    "go",
+    "rustc",
+    "cargo",
+    "rustup",
+    "clang",
+    "clangxx",
+    "gcc",
+    "gxx",
+    "cmake",
+    "make",
+    "ninja",
+    "ruby",
+    "gem",
+    "bundler",
+    "php",
+    "composer",
+    "dotnet",
+    "docker",
+    "kubectl",
+]
 
 
 def load_json(path: str) -> dict[str, Any]:
@@ -33,6 +63,14 @@ def first_nonempty(*values: str | None) -> str | None:
     for value in values:
         if value:
             return value
+    return None
+
+
+def approved_version(tool: dict[str, Any]) -> str | None:
+    if tool.get("version"):
+        return tool["version"]
+    if tool.get("version_probe_status") == "ok":
+        return tool.get("version_text")
     return None
 
 
@@ -177,7 +215,7 @@ def render_tool_section(
 ) -> list[str]:
     lines = [f"### 3.{section_number} {tool.get('label', tool_id)}", ""]
     selected = first_nonempty(tool.get("selected_executable"), tool.get("preferred_path"), tool.get("resolved_path"))
-    version = tool.get("version") or tool.get("version_text")
+    version = approved_version(tool)
     path_hit = tool.get("resolved_path")
 
     if tool_id == "java":
@@ -212,6 +250,14 @@ def render_tool_section(
         else:
             note += L(lang, ".", "。")
         lines.append(note)
+        if not version and tool.get("version_probe_status") != "ok":
+            lines.append(
+                L(
+                    lang,
+                    "- The Java launcher was found, but it did not report a usable runtime version. Treat Java as unavailable until a JDK or JRE is installed and `java -version` succeeds.",
+                    "- 已找到 Java 启动入口，但它没有返回可用的运行时版本。在安装好 JDK 或 JRE 且 `java -version` 成功之前，应把 Java 视为不可用。",
+                )
+            )
         return lines
 
     if tool_id == "maven":
@@ -293,6 +339,14 @@ def render_tool_section(
         lines.append(dash(L(lang, "Version", "当前版本"), version, lang))
     if path_hit and selected and not compare_paths(path_hit, selected):
         lines.append(dash(L(lang, "Current PATH hit", "当前 PATH 命中"), path_hit, lang))
+    if not version and tool.get("version_command") and tool.get("version_probe_status") != "ok":
+        lines.append(
+            L(
+                lang,
+                "- Note: The executable was found, but its version command did not return a usable version. Treat this tool as present but not yet verified for real use.",
+                "- 说明：已找到可执行入口，但版本命令没有返回可用版本。在版本命令成功之前，应将该工具视为“已命中入口但尚未真正验证可用”。",
+            )
+        )
     for note in tool.get("notes", []):
         lines.append(L(lang, f"- Note: {note}", f"- 说明：{note}"))
     return lines

@@ -35,6 +35,15 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
         "version_stream": "stderr",
         "version_regex": r'version "([^"]+)"',
     },
+    "javac": {
+        "label": "javac",
+        "commands": ["javac"],
+        "env_var_hint": "JAVA_HOME",
+        "env_var_suffix_windows": ["bin", "javac.exe"],
+        "env_var_suffix_posix": ["bin", "javac"],
+        "version_command": ["{selected_executable}", "-version"],
+        "version_regex": r"javac\s+([^\s]+)",
+    },
     "maven": {
         "label": "Maven",
         "commands": ["mvn"],
@@ -43,6 +52,15 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
         "env_var_suffix_posix": ["bin", "mvn"],
         "version_command": ["{selected_executable}", "-version"],
         "version_regex": r"Apache Maven\s+([^\s]+)",
+    },
+    "gradle": {
+        "label": "Gradle",
+        "commands": ["gradle"],
+        "env_var_hint": "GRADLE_HOME",
+        "env_var_suffix_windows": ["bin", "gradle.bat"],
+        "env_var_suffix_posix": ["bin", "gradle"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"Gradle\s+([^\s]+)",
     },
     "node": {
         "label": "Node.js",
@@ -57,6 +75,18 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
         "version_command": ["{selected_executable}", "--version"],
         "version_regex": r"(\d+\.\d+\.\d+)",
     },
+    "pnpm": {
+        "label": "pnpm",
+        "commands": ["pnpm"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"([^\s]+)",
+    },
+    "yarn": {
+        "label": "Yarn",
+        "commands": ["yarn"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"([^\s]+)",
+    },
     "python": {
         "label": "Python",
         "commands_windows": ["python", "py"],
@@ -65,22 +95,176 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
         "version_command": ["{selected_executable}", "--version"],
         "version_regex": r"Python\s+([^\s]+)",
     },
+    "go": {
+        "label": "Go",
+        "commands": ["go"],
+        "env_var_hint": "GOROOT",
+        "env_var_suffix_windows": ["bin", "go.exe"],
+        "env_var_suffix_posix": ["bin", "go"],
+        "version_command": ["{selected_executable}", "version"],
+        "version_regex": r"go version go([^\s]+)",
+    },
+    "rustc": {
+        "label": "Rust",
+        "commands": ["rustc"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"rustc\s+([^\s]+)",
+    },
+    "cargo": {
+        "label": "Cargo",
+        "commands": ["cargo"],
+        "env_var_hint": "CARGO_HOME",
+        "env_var_suffix_windows": ["bin", "cargo.exe"],
+        "env_var_suffix_posix": ["bin", "cargo"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"cargo\s+([^\s]+)",
+    },
+    "rustup": {
+        "label": "Rustup",
+        "commands": ["rustup"],
+        "env_var_hint": "CARGO_HOME",
+        "env_var_suffix_windows": ["bin", "rustup.exe"],
+        "env_var_suffix_posix": ["bin", "rustup"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"rustup\s+([^\s]+)",
+    },
+    "clang": {
+        "label": "Clang",
+        "commands": ["clang"],
+        "version_command": ["{selected_executable}", "--version"],
+    },
+    "clangxx": {
+        "label": "Clang++",
+        "commands": ["clang++"],
+        "version_command": ["{selected_executable}", "--version"],
+    },
+    "gcc": {
+        "label": "GCC",
+        "commands": ["gcc"],
+        "version_command": ["{selected_executable}", "--version"],
+    },
+    "gxx": {
+        "label": "G++",
+        "commands": ["g++"],
+        "version_command": ["{selected_executable}", "--version"],
+    },
+    "cmake": {
+        "label": "CMake",
+        "commands": ["cmake"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"cmake version\s+([^\s]+)",
+    },
+    "make": {
+        "label": "Make",
+        "commands": ["make"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"GNU Make\s+([^\s]+)",
+    },
+    "ninja": {
+        "label": "Ninja",
+        "commands": ["ninja"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"([^\s]+)",
+    },
+    "ruby": {
+        "label": "Ruby",
+        "commands": ["ruby"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"ruby\s+([^\s]+)",
+    },
+    "gem": {
+        "label": "RubyGems",
+        "commands": ["gem"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"([^\s]+)",
+    },
+    "bundler": {
+        "label": "Bundler",
+        "commands": ["bundle"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"Bundler version\s+([^\s]+)",
+    },
+    "php": {
+        "label": "PHP",
+        "commands": ["php"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"PHP\s+([^\s]+)",
+    },
+    "composer": {
+        "label": "Composer",
+        "commands": ["composer"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"Composer version\s+([^\s]+)",
+    },
+    "dotnet": {
+        "label": ".NET SDK",
+        "commands": ["dotnet"],
+        "env_var_hint": "DOTNET_ROOT",
+        "env_var_suffix_windows": ["dotnet.exe"],
+        "env_var_suffix_posix": ["dotnet"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"([^\s]+)",
+    },
+    "docker": {
+        "label": "Docker",
+        "commands": ["docker"],
+        "version_command": ["{selected_executable}", "--version"],
+        "version_regex": r"Docker version\s+([^,\s]+)",
+    },
+    "kubectl": {
+        "label": "kubectl",
+        "commands": ["kubectl"],
+        "version_command": ["{selected_executable}", "version", "--client"],
+        "version_regex": r"Client Version:\s*v?([^\s]+)",
+    },
 }
 
 DEFAULT_ENV_VARS = [
     "JAVA_HOME",
     "MAVEN_HOME",
+    "GRADLE_HOME",
+    "GOROOT",
+    "GOPATH",
+    "CARGO_HOME",
+    "RUSTUP_HOME",
     "NVM_DIR",
     "PYENV_ROOT",
+    "RBENV_ROOT",
     "SDKMAN_DIR",
     "HOMEBREW_PREFIX",
     "VIRTUAL_ENV",
+    "GEM_HOME",
+    "BUNDLE_PATH",
+    "COMPOSER_HOME",
+    "DOTNET_ROOT",
+    "CC",
+    "CXX",
 ]
-COMMON_PATH_MARKERS = ["java", "maven", "node", "python"]
+COMMON_PATH_MARKERS = [
+    "java",
+    "maven",
+    "gradle",
+    "node",
+    "python",
+    "go",
+    "cargo",
+    "rust",
+    "llvm",
+    "clang",
+    "gcc",
+    "cmake",
+    "ninja",
+    "ruby",
+    "php",
+    "composer",
+    "dotnet",
+    "docker",
+    "kube",
+]
 PLATFORM_PATH_MARKERS = {
     "windows": ["windowsapps", "nvm", "nodejs"],
-    "macos": [".nvm", ".pyenv", ".sdkman", "/opt/homebrew", "/usr/local/bin"],
-    "linux": [".nvm", ".pyenv", ".sdkman", "/usr/local/bin", "/usr/lib/jvm", "/snap/bin"],
+    "macos": [".nvm", ".pyenv", ".rbenv", ".sdkman", ".cargo", ".rustup", "/opt/homebrew", "/usr/local/bin"],
+    "linux": [".nvm", ".pyenv", ".rbenv", ".sdkman", ".cargo", ".rustup", "/usr/local/bin", "/usr/lib/jvm", "/snap/bin"],
 }
 
 
@@ -275,6 +459,7 @@ def extract_version(text: str, regex: str | None) -> str | None:
         match = re.search(regex, text, flags=re.MULTILINE)
         if match:
             return match.group(1).strip()
+        return None
     first_line = next((line.strip() for line in text.splitlines() if line.strip()), "")
     return first_line or None
 
@@ -605,7 +790,23 @@ def build_path_summary(
     if maven_home:
         maybe_add(os.path.join(maven_home, "bin"))
 
-    for name in ["NVM_DIR", "PYENV_ROOT", "SDKMAN_DIR", "HOMEBREW_PREFIX", "VIRTUAL_ENV"]:
+    for name in [
+        "NVM_DIR",
+        "PYENV_ROOT",
+        "RBENV_ROOT",
+        "SDKMAN_DIR",
+        "HOMEBREW_PREFIX",
+        "VIRTUAL_ENV",
+        "GRADLE_HOME",
+        "GOROOT",
+        "GOPATH",
+        "CARGO_HOME",
+        "RUSTUP_HOME",
+        "GEM_HOME",
+        "BUNDLE_PATH",
+        "COMPOSER_HOME",
+        "DOTNET_ROOT",
+    ]:
         value = env_variables.get(name, {}).get("value")
         if value:
             maybe_add(value)

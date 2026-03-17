@@ -21,6 +21,15 @@ const DEFAULT_TOOL_SPECS = {
     version_stream: 'stderr',
     version_regex: 'version "([^"]+)"',
   },
+  javac: {
+    label: 'javac',
+    commands: ['javac'],
+    env_var_hint: 'JAVA_HOME',
+    env_var_suffix_windows: ['bin', 'javac.exe'],
+    env_var_suffix_posix: ['bin', 'javac'],
+    version_command: ['{selected_executable}', '-version'],
+    version_regex: 'javac\\s+([^\\s]+)',
+  },
   maven: {
     label: 'Maven',
     commands: ['mvn'],
@@ -29,6 +38,15 @@ const DEFAULT_TOOL_SPECS = {
     env_var_suffix_posix: ['bin', 'mvn'],
     version_command: ['{selected_executable}', '-version'],
     version_regex: 'Apache Maven\\s+([^\\s]+)',
+  },
+  gradle: {
+    label: 'Gradle',
+    commands: ['gradle'],
+    env_var_hint: 'GRADLE_HOME',
+    env_var_suffix_windows: ['bin', 'gradle.bat'],
+    env_var_suffix_posix: ['bin', 'gradle'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'Gradle\\s+([^\\s]+)',
   },
   node: {
     label: 'Node.js',
@@ -42,6 +60,18 @@ const DEFAULT_TOOL_SPECS = {
     version_command: ['{selected_executable}', '--version'],
     version_regex: '(\\d+\\.\\d+\\.\\d+)',
   },
+  pnpm: {
+    label: 'pnpm',
+    commands: ['pnpm'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: '([^\\s]+)',
+  },
+  yarn: {
+    label: 'Yarn',
+    commands: ['yarn'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: '([^\\s]+)',
+  },
   python: {
     label: 'Python',
     commands_windows: ['python', 'py'],
@@ -49,23 +79,177 @@ const DEFAULT_TOOL_SPECS = {
     version_command: ['{selected_executable}', '--version'],
     version_regex: 'Python\\s+([^\\s]+)',
   },
+  go: {
+    label: 'Go',
+    commands: ['go'],
+    env_var_hint: 'GOROOT',
+    env_var_suffix_windows: ['bin', 'go.exe'],
+    env_var_suffix_posix: ['bin', 'go'],
+    version_command: ['{selected_executable}', 'version'],
+    version_regex: 'go version go([^\\s]+)',
+  },
+  rustc: {
+    label: 'Rust',
+    commands: ['rustc'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'rustc\\s+([^\\s]+)',
+  },
+  cargo: {
+    label: 'Cargo',
+    commands: ['cargo'],
+    env_var_hint: 'CARGO_HOME',
+    env_var_suffix_windows: ['bin', 'cargo.exe'],
+    env_var_suffix_posix: ['bin', 'cargo'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'cargo\\s+([^\\s]+)',
+  },
+  rustup: {
+    label: 'Rustup',
+    commands: ['rustup'],
+    env_var_hint: 'CARGO_HOME',
+    env_var_suffix_windows: ['bin', 'rustup.exe'],
+    env_var_suffix_posix: ['bin', 'rustup'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'rustup\\s+([^\\s]+)',
+  },
+  clang: {
+    label: 'Clang',
+    commands: ['clang'],
+    version_command: ['{selected_executable}', '--version'],
+  },
+  clangxx: {
+    label: 'Clang++',
+    commands: ['clang++'],
+    version_command: ['{selected_executable}', '--version'],
+  },
+  gcc: {
+    label: 'GCC',
+    commands: ['gcc'],
+    version_command: ['{selected_executable}', '--version'],
+  },
+  gxx: {
+    label: 'G++',
+    commands: ['g++'],
+    version_command: ['{selected_executable}', '--version'],
+  },
+  cmake: {
+    label: 'CMake',
+    commands: ['cmake'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'cmake version\\s+([^\\s]+)',
+  },
+  make: {
+    label: 'Make',
+    commands: ['make'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'GNU Make\\s+([^\\s]+)',
+  },
+  ninja: {
+    label: 'Ninja',
+    commands: ['ninja'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: '([^\\s]+)',
+  },
+  ruby: {
+    label: 'Ruby',
+    commands: ['ruby'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'ruby\\s+([^\\s]+)',
+  },
+  gem: {
+    label: 'RubyGems',
+    commands: ['gem'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: '([^\\s]+)',
+  },
+  bundler: {
+    label: 'Bundler',
+    commands: ['bundle'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'Bundler version\\s+([^\\s]+)',
+  },
+  php: {
+    label: 'PHP',
+    commands: ['php'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'PHP\\s+([^\\s]+)',
+  },
+  composer: {
+    label: 'Composer',
+    commands: ['composer'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'Composer version\\s+([^\\s]+)',
+  },
+  dotnet: {
+    label: '.NET SDK',
+    commands: ['dotnet'],
+    env_var_hint: 'DOTNET_ROOT',
+    env_var_suffix_windows: ['dotnet.exe'],
+    env_var_suffix_posix: ['dotnet'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: '([^\\s]+)',
+  },
+  docker: {
+    label: 'Docker',
+    commands: ['docker'],
+    version_command: ['{selected_executable}', '--version'],
+    version_regex: 'Docker version\\s+([^,\\s]+)',
+  },
+  kubectl: {
+    label: 'kubectl',
+    commands: ['kubectl'],
+    version_command: ['{selected_executable}', 'version', '--client'],
+    version_regex: 'Client Version:\\s*v?([^\\s]+)',
+  },
 };
 
 const DEFAULT_ENV_VARS = [
   'JAVA_HOME',
   'MAVEN_HOME',
+  'GRADLE_HOME',
+  'GOROOT',
+  'GOPATH',
+  'CARGO_HOME',
+  'RUSTUP_HOME',
   'NVM_DIR',
   'PYENV_ROOT',
+  'RBENV_ROOT',
   'SDKMAN_DIR',
   'HOMEBREW_PREFIX',
   'VIRTUAL_ENV',
+  'GEM_HOME',
+  'BUNDLE_PATH',
+  'COMPOSER_HOME',
+  'DOTNET_ROOT',
+  'CC',
+  'CXX',
 ];
 
-const COMMON_PATH_MARKERS = ['java', 'maven', 'node', 'python'];
+const COMMON_PATH_MARKERS = [
+  'java',
+  'maven',
+  'gradle',
+  'node',
+  'python',
+  'go',
+  'cargo',
+  'rust',
+  'llvm',
+  'clang',
+  'gcc',
+  'cmake',
+  'ninja',
+  'ruby',
+  'php',
+  'composer',
+  'dotnet',
+  'docker',
+  'kube',
+];
 const PLATFORM_PATH_MARKERS = {
   windows: ['windowsapps', 'nvm', 'nodejs'],
-  macos: ['.nvm', '.pyenv', '.sdkman', '/opt/homebrew', '/usr/local/bin'],
-  linux: ['.nvm', '.pyenv', '.sdkman', '/usr/local/bin', '/usr/lib/jvm', '/snap/bin'],
+  macos: ['.nvm', '.pyenv', '.rbenv', '.sdkman', '.cargo', '.rustup', '/opt/homebrew', '/usr/local/bin'],
+  linux: ['.nvm', '.pyenv', '.rbenv', '.sdkman', '.cargo', '.rustup', '/usr/local/bin', '/usr/lib/jvm', '/snap/bin'],
 };
 
 function deepClone(value) {
@@ -304,6 +488,7 @@ function extractVersion(text, regex) {
   if (regex) {
     const match = source.match(new RegExp(regex, 'm'));
     if (match) return match[1].trim();
+    return null;
   }
   const firstLine = source.split(/\r?\n/).find((line) => line.trim());
   return firstLine ? firstLine.trim() : null;
@@ -586,7 +771,23 @@ function buildPathSummary(tools, envVariables, extraProbeData) {
   if (javaHome) maybeAdd(path.join(javaHome, 'bin'));
   if (mavenHome) maybeAdd(path.join(mavenHome, 'bin'));
 
-  for (const name of ['NVM_DIR', 'PYENV_ROOT', 'SDKMAN_DIR', 'HOMEBREW_PREFIX', 'VIRTUAL_ENV']) {
+  for (const name of [
+    'NVM_DIR',
+    'PYENV_ROOT',
+    'RBENV_ROOT',
+    'SDKMAN_DIR',
+    'HOMEBREW_PREFIX',
+    'VIRTUAL_ENV',
+    'GRADLE_HOME',
+    'GOROOT',
+    'GOPATH',
+    'CARGO_HOME',
+    'RUSTUP_HOME',
+    'GEM_HOME',
+    'BUNDLE_PATH',
+    'COMPOSER_HOME',
+    'DOTNET_ROOT',
+  ]) {
     const value = (envVariables[name] || {}).value;
     if (!value) continue;
     maybeAdd(value);

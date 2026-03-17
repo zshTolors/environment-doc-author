@@ -101,15 +101,28 @@ python3 scripts/render_environment_docs.py ./environment-baseline.json \
 - The built-in detector covers common local tools and core env vars:
   - Git
   - Java
+  - `javac`
   - Maven
+  - Gradle
   - Node
   - npm
+  - pnpm
+  - Yarn
   - Python
+  - Go
+  - Rust (`rustc`, Cargo, Rustup)
+  - Clang, Clang++, GCC, G++, CMake, Make, Ninja
+  - Ruby, RubyGems, Bundler
+  - PHP, Composer
+  - .NET SDK
+  - Docker
+  - kubectl
   - `JAVA_HOME`
   - `MAVEN_HOME`
-  - common runtime managers such as `NVM_DIR`, `PYENV_ROOT`, `SDKMAN_DIR`, `HOMEBREW_PREFIX`, `VIRTUAL_ENV`
+  - `GRADLE_HOME`, `GOROOT`, `GOPATH`, `CARGO_HOME`, `RUSTUP_HOME`, `DOTNET_ROOT`, `CC`, `CXX`
+  - common runtime managers such as `NVM_DIR`, `PYENV_ROOT`, `RBENV_ROOT`, `SDKMAN_DIR`, `HOMEBREW_PREFIX`, `VIRTUAL_ENV`
   - important `PATH` entries
-- For services, databases, compilers, startup scripts, or project-specific tooling, add an extra probe file and run a targeted scan.
+- For services, databases, startup scripts, or project-specific tooling, add an extra probe file and run a targeted scan.
 - Read [probe-file.md](./references/probe-file.md) only when you need extra probes.
 
 ### 5. Apply the hard rules consistently

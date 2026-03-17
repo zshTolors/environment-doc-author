@@ -6,16 +6,29 @@ The built-in detector already covers:
 
 - Git
 - Java
+- `javac`
 - Maven
+- Gradle
 - Node
 - npm
+- pnpm
+- Yarn
 - Python
+- Go
+- Rust (`rustc`, Cargo, Rustup)
+- Clang, Clang++, GCC, G++, CMake, Make, Ninja
+- Ruby, RubyGems, Bundler
+- PHP, Composer
+- .NET SDK
+- Docker
+- kubectl
 - `JAVA_HOME`
 - `MAVEN_HOME`
-- common runtime-manager env vars such as `NVM_DIR`, `PYENV_ROOT`, `SDKMAN_DIR`, `HOMEBREW_PREFIX`, and `VIRTUAL_ENV`
+- `GRADLE_HOME`, `GOROOT`, `GOPATH`, `CARGO_HOME`, `RUSTUP_HOME`, `DOTNET_ROOT`, `CC`, `CXX`
+- common runtime-manager env vars such as `NVM_DIR`, `PYENV_ROOT`, `RBENV_ROOT`, `SDKMAN_DIR`, `HOMEBREW_PREFIX`, and `VIRTUAL_ENV`
 - important PATH entries on Windows, macOS, and Linux
 
-For services, databases, compilers, startup scripts, or project-specific tools, create a JSON file and pass it through `--probe-file`.
+For services, databases, startup scripts, or project-specific tools, create a JSON file and pass it through `--probe-file`.
 
 ## Supported Keys
 

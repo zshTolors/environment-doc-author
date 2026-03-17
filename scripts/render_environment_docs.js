@@ -3,7 +3,37 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const DEFAULT_TOOL_ORDER = ['git', 'java', 'maven', 'node', 'npm', 'python'];
+const DEFAULT_TOOL_ORDER = [
+  'git',
+  'java',
+  'javac',
+  'maven',
+  'gradle',
+  'node',
+  'npm',
+  'pnpm',
+  'yarn',
+  'python',
+  'go',
+  'rustc',
+  'cargo',
+  'rustup',
+  'clang',
+  'clangxx',
+  'gcc',
+  'gxx',
+  'cmake',
+  'make',
+  'ninja',
+  'ruby',
+  'gem',
+  'bundler',
+  'php',
+  'composer',
+  'dotnet',
+  'docker',
+  'kubectl',
+];
 
 function readText(pathname) {
   const content = fs.readFileSync(pathname, 'utf8');
@@ -26,6 +56,12 @@ function code(value) {
 
 function firstNonempty(...values) {
   return values.find((value) => value) || null;
+}
+
+function approvedVersion(tool) {
+  if (tool.version) return tool.version;
+  if (tool.version_probe_status === 'ok') return tool.version_text || null;
+  return null;
 }
 
 function normalizeLang(value) {
@@ -160,7 +196,7 @@ function launcherLabel(commandName, osFamily, lang) {
 function renderToolSection(toolId, tool, sectionNumber, envVars, osFamily, lang) {
   const lines = [`### 3.${sectionNumber} ${tool.label || toolId}`, ''];
   const selected = firstNonempty(tool.selected_executable, tool.preferred_path, tool.resolved_path);
-  const version = tool.version || tool.version_text;
+  const version = approvedVersion(tool);
   const pathHit = tool.resolved_path;
 
   if (toolId === 'java') {
@@ -198,6 +234,15 @@ function renderToolSection(toolId, tool, sectionNumber, envVars, osFamily, lang)
       note += L(lang, '.', '。');
     }
     lines.push(note);
+    if (!version && tool.version_probe_status !== 'ok') {
+      lines.push(
+        L(
+          lang,
+          '- The Java launcher was found, but it did not report a usable runtime version. Treat Java as unavailable until a JDK or JRE is installed and `java -version` succeeds.',
+          '- 已找到 Java 启动入口，但它没有返回可用的运行时版本。在安装好 JDK 或 JRE 且 `java -version` 成功之前，应把 Java 视为不可用。'
+        )
+      );
+    }
     return lines;
   }
 
@@ -297,6 +342,15 @@ function renderToolSection(toolId, tool, sectionNumber, envVars, osFamily, lang)
   if (version) lines.push(dash(L(lang, 'Version', '当前版本'), version, lang));
   if (pathHit && selected && !comparePaths(pathHit, selected)) {
     lines.push(dash(L(lang, 'Current PATH hit', '当前 PATH 命中'), pathHit, lang));
+  }
+  if (!version && tool.version_command && tool.version_probe_status !== 'ok') {
+    lines.push(
+      L(
+        lang,
+        '- Note: The executable was found, but its version command did not return a usable version. Treat this tool as present but not yet verified for real use.',
+        '- 说明：已找到可执行入口，但版本命令没有返回可用版本。在版本命令成功之前，应将该工具视为“已命中入口但尚未真正验证可用”。'
+      )
+    );
   }
   for (const note of tool.notes || []) {
     lines.push(L(lang, `- Note: ${note}`, `- 说明：${note}`));
