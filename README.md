@@ -7,24 +7,21 @@ This repository ships two standalone implementations that detect the current env
 
 ## Implementations
 
-- `scripts/detect_environment.js` / `scripts/render_environment_docs.js`
+- JavaScript: `scripts/detect_environment.js` / `scripts/render_environment_docs.js`
   - Pure Node.js implementation.
-- `scripts/detect_environment.py` / `scripts/render_environment_docs.py`
+  - Node.js 18+ recommended.
+- Python: `scripts/detect_environment.py` / `scripts/render_environment_docs.py`
   - Python implementation.
-  - Requires Python 3.7+.
+  - Python 3.7+ required.
 
 ## Built-In Coverage
 
 The default detector now covers mainstream development toolchains out of the box, including:
 
-- Source control and core runtimes
-  - Git, Java, `javac`, Maven, Gradle, Node.js, npm, pnpm, Yarn, Python
-- Systems and compiled languages
-  - Go, Rust (`rustc`, Cargo, Rustup), Clang, Clang++, GCC, G++, CMake, Make, Ninja
-- Other common developer tooling
-  - Ruby, RubyGems, Bundler, PHP, Composer, .NET SDK, Docker, kubectl
-- Important environment variables
-  - `JAVA_HOME`, `MAVEN_HOME`, `GRADLE_HOME`, `GOROOT`, `GOPATH`, `CARGO_HOME`, `RUSTUP_HOME`, `NVM_DIR`, `PYENV_ROOT`, `RBENV_ROOT`, `SDKMAN_DIR`, `HOMEBREW_PREFIX`, `VIRTUAL_ENV`, `GEM_HOME`, `BUNDLE_PATH`, `COMPOSER_HOME`, `DOTNET_ROOT`, `CC`, `CXX`
+- Source control and core runtimes: Git, Java, javac, Maven, Gradle, Node.js, npm, pnpm, Yarn, Python
+- Systems and compiled languages: Go, Rust (rustc, Cargo, Rustup), Clang, Clang++, GCC, G++, CMake, Make, Ninja
+- Other common developer tooling: Ruby, RubyGems, Bundler, PHP, Composer, .NET SDK, Docker, kubectl
+- Important environment variables: `JAVA_HOME`, `MAVEN_HOME`, `GRADLE_HOME`, `GOROOT`, `GOPATH`, `CARGO_HOME`, `RUSTUP_HOME`, `NVM_DIR`, `PYENV_ROOT`, `RBENV_ROOT`, `SDKMAN_DIR`, `HOMEBREW_PREFIX`, `VIRTUAL_ENV`, `GEM_HOME`, `BUNDLE_PATH`, `COMPOSER_HOME`, `DOTNET_ROOT`, `CC`, `CXX`
 
 ## Outputs
 

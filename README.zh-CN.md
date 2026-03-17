@@ -7,9 +7,10 @@
 
 ## 实现方式
 
-- `scripts/detect_environment.js` / `scripts/render_environment_docs.js`
+- JavaScript：`scripts/detect_environment.js` / `scripts/render_environment_docs.js`
   - 纯 Node.js 实现
-- `scripts/detect_environment.py` / `scripts/render_environment_docs.py`
+  - 建议 Node.js 18+
+- Python：`scripts/detect_environment.py` / `scripts/render_environment_docs.py`
   - Python 实现
   - 要求 Python 3.7+
 
@@ -17,14 +18,10 @@
 
 默认探测器现在已经内置支持主流开发工具链，包括：
 
-- 源码管理与核心运行时
-  - Git、Java、`javac`、Maven、Gradle、Node.js、npm、pnpm、Yarn、Python
-- 系统与编译型语言工具链
-  - Go、Rust（`rustc`、Cargo、Rustup）、Clang、Clang++、GCC、G++、CMake、Make、Ninja
-- 其他常见开发工具
-  - Ruby、RubyGems、Bundler、PHP、Composer、.NET SDK、Docker、kubectl
-- 重要环境变量
-  - `JAVA_HOME`、`MAVEN_HOME`、`GRADLE_HOME`、`GOROOT`、`GOPATH`、`CARGO_HOME`、`RUSTUP_HOME`、`NVM_DIR`、`PYENV_ROOT`、`RBENV_ROOT`、`SDKMAN_DIR`、`HOMEBREW_PREFIX`、`VIRTUAL_ENV`、`GEM_HOME`、`BUNDLE_PATH`、`COMPOSER_HOME`、`DOTNET_ROOT`、`CC`、`CXX`
+- 源码管理与核心运行时：Git、Java、javac、Maven、Gradle、Node.js、npm、pnpm、Yarn、Python
+- 系统与编译型语言工具链：Go、Rust（rustc、Cargo、Rustup）、Clang、Clang++、GCC、G++、CMake、Make、Ninja
+- 其他常见开发工具：Ruby、RubyGems、Bundler、PHP、Composer、.NET SDK、Docker、kubectl
+- 重要环境变量：`JAVA_HOME`、`MAVEN_HOME`、`GRADLE_HOME`、`GOROOT`、`GOPATH`、`CARGO_HOME`、`RUSTUP_HOME`、`NVM_DIR`、`PYENV_ROOT`、`RBENV_ROOT`、`SDKMAN_DIR`、`HOMEBREW_PREFIX`、`VIRTUAL_ENV`、`GEM_HOME`、`BUNDLE_PATH`、`COMPOSER_HOME`、`DOTNET_ROOT`、`CC`、`CXX`
 
 ## 输出文件
 
