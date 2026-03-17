@@ -2,14 +2,13 @@
 
 [Chinese (Simplified)](./README.zh-CN.md)
 
-Generate and maintain environment baseline documents from verified local machine state.
-This repository ships two standalone implementations that detect the current environment, keep a machine-readable baseline, and render guardrail documents such as `ENVIRONMENT_POLICY.md`, `AGENTS` snippets, and reusable skill snippets.
+Verify real local machine capabilities for environment-aware agent work, then generate and maintain reusable environment baseline documents.
+This repository ships two standalone implementations that detect the current environment, keep a machine-readable baseline, help agents choose machine-specific commands from verified facts, and render guardrail documents such as `ENVIRONMENT_POLICY.md`, `AGENTS` snippets, and reusable skill snippets.
 
 ## Implementations
 
 - `scripts/detect_environment.js` / `scripts/render_environment_docs.js`
   - Pure Node.js implementation.
-  - No Python dependency.
 - `scripts/detect_environment.py` / `scripts/render_environment_docs.py`
   - Python implementation.
   - Requires Python 3.7+.
@@ -42,7 +41,6 @@ The default detector now covers mainstream development toolchains out of the box
 
 - JavaScript entry points
   - Node.js 18+ recommended.
-  - Python is not required.
 - Python entry points
   - Python 3.7+ required.
   - On Windows, confirm which interpreter you are actually using before running the Python scripts.
@@ -165,14 +163,14 @@ Current verification covered the Windows, macOS, and Linux workflows and confirm
 | --- | --- | --- | --- |
 | Windows | JavaScript | Yes | Verified end-to-end in a Windows environment. |
 | Windows | Python | Yes | Verified end-to-end with Python 3.7+ in a Windows environment. |
-| macOS | JavaScript | Yes | Verified end-to-end on macOS 26.2 (Apple silicon) with Node.js 24.14.0 on March 17, 2026. |
-| macOS | Python | Yes | Verified end-to-end on macOS 26.2 (Apple silicon) with Python 3.9.6 on March 17, 2026. |
+| macOS | JavaScript | Yes | Verified end-to-end on macOS 26.2 (Apple silicon) with Node.js 24.14.0. |
+| macOS | Python | Yes | Verified end-to-end on macOS 26.2 (Apple silicon) with Python 3.9.6. |
 | Linux | JavaScript | Yes | Verified end-to-end on Ubuntu 22.04 with Node.js 20. |
 | Linux | Python | Yes | Verified end-to-end on Ubuntu 22.04 with Python 3.10. |
 
 ## Notes
 
-- This repository no longer ships POSIX shell wrappers because they only forwarded to Python and did not provide a standalone implementation.
+- When a repository already has an `AGENTS.md`, do not overwrite it by default. Generate or refresh a dedicated environment snippet such as `AGENTS.environment.md`, and only merge into `AGENTS.md` when the user explicitly asks for that change.
 - If a Windows machine has multiple Python installs, prefer an explicit Python 3.7+ path instead of assuming `python` points to the right interpreter.
 - Older enterprise distributions may need self-managed runtimes when their default repositories cannot provide Python 3.7+ or a modern Node.js release.
 - The skill still enforces the same hard rules: do not install, upgrade, uninstall, or silently reconfigure tools without explicit user approval.

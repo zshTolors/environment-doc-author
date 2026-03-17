@@ -1,6 +1,6 @@
 ---
 name: environment-doc-author
-description: Create or update environment baseline documents from real local machine state. Use when Codex, another AI agent, a CLI runner, or OpenClaw needs to inspect installed tools, env vars, services, runtimes, compilers, startup scripts, or build/run/test/debug/migration tasks, then write or refresh `ENVIRONMENT_POLICY.md`, `AGENTS.md` environment guardrails, related skill instructions, or a machine-readable baseline JSON.
+description: Verify real local environment facts before an agent uses machine-specific commands, runtimes, compilers, services, or startup scripts, then create or refresh environment baseline JSON and related environment policy, AGENTS, or skill documents from those verified facts.
 ---
 
 # Environment Doc Author
@@ -10,18 +10,39 @@ description: Create or update environment baseline documents from real local mac
 Use this skill to turn the current machine state into reusable environment guardrails.
 Probe the machine first, keep a machine-readable baseline JSON, and render human-readable policy fragments from verified facts only.
 
+Use it not only when you need to generate or refresh environment documents, but also when an agent task depends on local commands, local runtimes, local package managers, local services, startup scripts, or machine-specific install roots.
+
 This skill supports two standalone implementations:
 
 - JavaScript
   - `scripts/detect_environment.js`
   - `scripts/render_environment_docs.js`
-  - Pure Node.js. No Python dependency.
+  - Pure Node.js.
 - Python
   - `scripts/detect_environment.py`
   - `scripts/render_environment_docs.py`
   - Requires Python 3.7+.
 
-## Workflow
+## When To Use
+
+- The task needs real local commands such as `java`, `mvn`, `node`, `npm`, `python`, `go`, `cargo`, `docker`, `kubectl`, `dotnet`, `bundle`, `composer`, or similar tools.
+- The agent needs to decide which local executable, runtime manager, install root, env var, or startup script is actually present on this machine.
+- The repository needs to create or refresh `environment-baseline.json`, `ENVIRONMENT_POLICY.md`, `AGENTS.environment.md`, `AGENTS.md` environment sections, or reusable environment skill snippets.
+- A baseline already exists but may be stale after local toolchain changes, machine migration, shell profile updates, or package manager changes.
+- If the repository already has an `AGENTS.md`, default to writing a separate environment snippet such as `AGENTS.environment.md` instead of overwriting the existing file.
+
+## Input Constraints
+
+- Treat the current machine as the authority. Existing docs are hints, not proof.
+- Do not invent tools, versions, install roots, symlink targets, env vars, services, ports, package managers, or PATH entries.
+- If the task depends on a machine-specific command and the baseline does not already verify it, probe first.
+- If the user gives a path or command, verify that it exists before treating it as fact.
+- Distinguish a launcher, shim, alias, wrapper, symlink, `.cmd`/`.bat` script, and the real install directory.
+- If evidence is missing, say it is unverified. Do not fill the gap with guesses.
+- Do not overwrite an existing `AGENTS.md` unless the user explicitly asks for that file to be updated.
+- If a command would install, upgrade, uninstall, enable, or reconfigure software, stop and obtain explicit approval first.
+
+## Execution Flow
 
 ### 1. Read the existing baseline before probing
 
@@ -35,7 +56,9 @@ This skill supports two standalone implementations:
 ### 2. Create the initial baseline when none exists
 
 - Run one implementation against the current machine and save the result as JSON.
+- If the immediate task only depends on a small set of local tools, you may still start with a targeted probe, but keep the baseline JSON authoritative once facts are verified.
 - Render the JSON into the human-readable docs that the repository or agent stack needs.
+- When an `AGENTS.md` already exists, write a separate environment snippet by default and keep merge work explicit and local to the relevant section.
 - Keep the JSON and human docs in sync. Do not maintain only one of them.
 - Both implementations auto-detect the current machine language and generate Chinese or English docs. If the language cannot be recognized, they default to English.
 
@@ -69,6 +92,7 @@ Windows note for Python:
 - Do not re-probe everything by default when only one tool or task changed.
 - If a task mentions a tool not covered by the current baseline, probe that tool first, then update the docs.
 - If the current machine state does not match the baseline, record the verified change and refresh both JSON and human docs.
+- When the task is "run a local command safely", use the baseline plus a fresh targeted probe to confirm the exact executable, version, and relevant env vars before choosing the command.
 
 JavaScript:
 
@@ -130,6 +154,7 @@ python3 scripts/render_environment_docs.py ./environment-baseline.json \
 - Do not invent tools, versions, install roots, services, or env vars.
 - Verify executables with absolute paths and version commands whenever possible.
 - Distinguish shims, wrappers, symlinks, aliases, and launchers from real install directories.
+- Prefer facts captured in `environment-baseline.json` plus fresh verification over memory or generic platform assumptions.
 - If a tool is missing:
   1. Tell the user which tool is missing.
   2. Explain why it is needed.

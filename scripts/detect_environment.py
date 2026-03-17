@@ -46,7 +46,8 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
     },
     "maven": {
         "label": "Maven",
-        "commands": ["mvn"],
+        "commands_windows": ["mvn.cmd", "mvn"],
+        "commands_posix": ["mvn"],
         "env_var_hint": "MAVEN_HOME",
         "env_var_suffix_windows": ["bin", "mvn.cmd"],
         "env_var_suffix_posix": ["bin", "mvn"],
@@ -55,7 +56,8 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
     },
     "gradle": {
         "label": "Gradle",
-        "commands": ["gradle"],
+        "commands_windows": ["gradle.bat", "gradle"],
+        "commands_posix": ["gradle"],
         "env_var_hint": "GRADLE_HOME",
         "env_var_suffix_windows": ["bin", "gradle.bat"],
         "env_var_suffix_posix": ["bin", "gradle"],
@@ -77,13 +79,15 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
     },
     "pnpm": {
         "label": "pnpm",
-        "commands": ["pnpm"],
+        "commands_windows": ["pnpm.cmd", "pnpm"],
+        "commands_posix": ["pnpm"],
         "version_command": ["{selected_executable}", "--version"],
         "version_regex": r"([^\s]+)",
     },
     "yarn": {
         "label": "Yarn",
-        "commands": ["yarn"],
+        "commands_windows": ["yarn.cmd", "yarn"],
+        "commands_posix": ["yarn"],
         "version_command": ["{selected_executable}", "--version"],
         "version_regex": r"([^\s]+)",
     },
@@ -174,13 +178,15 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
     },
     "gem": {
         "label": "RubyGems",
-        "commands": ["gem"],
+        "commands_windows": ["gem.bat", "gem"],
+        "commands_posix": ["gem"],
         "version_command": ["{selected_executable}", "--version"],
         "version_regex": r"([^\s]+)",
     },
     "bundler": {
         "label": "Bundler",
-        "commands": ["bundle"],
+        "commands_windows": ["bundle.bat", "bundle", "bundler.bat", "bundler"],
+        "commands_posix": ["bundle", "bundler"],
         "version_command": ["{selected_executable}", "--version"],
         "version_regex": r"Bundler version\s+([^\s]+)",
     },
@@ -192,7 +198,8 @@ DEFAULT_TOOL_SPECS: dict[str, dict[str, Any]] = {
     },
     "composer": {
         "label": "Composer",
-        "commands": ["composer"],
+        "commands_windows": ["composer.bat", "composer"],
+        "commands_posix": ["composer"],
         "version_command": ["{selected_executable}", "--version"],
         "version_regex": r"Composer version\s+([^\s]+)",
     },
@@ -262,7 +269,7 @@ COMMON_PATH_MARKERS = [
     "kube",
 ]
 PLATFORM_PATH_MARKERS = {
-    "windows": ["windowsapps", "nvm", "nodejs"],
+    "windows": ["windowsapps", "nvm", "nodejs", "cargo", "rustup", "dotnet", "scoop", "chocolatey", "msys", "mingw", "ruby", "php"],
     "macos": [".nvm", ".pyenv", ".rbenv", ".sdkman", ".cargo", ".rustup", "/opt/homebrew", "/usr/local/bin"],
     "linux": [".nvm", ".pyenv", ".rbenv", ".sdkman", ".cargo", ".rustup", "/usr/local/bin", "/usr/lib/jvm", "/snap/bin"],
 }
@@ -437,6 +444,21 @@ def run_command(command: list[str], timeout: int = 8, cwd: str | None = None) ->
     }
 
 
+def windows_executable_rank(candidate: str) -> int:
+    extension = Path(candidate).suffix.lower()
+    if extension == ".exe":
+        return 0
+    if extension == ".cmd":
+        return 1
+    if extension == ".bat":
+        return 2
+    if extension == ".com":
+        return 3
+    if extension:
+        return 4
+    return 5
+
+
 def resolve_command_matches(command: str) -> list[str]:
     if is_windows():
         result = run_command(["where.exe", command])
@@ -449,7 +471,10 @@ def resolve_command_matches(command: str) -> list[str]:
         stripped = line.strip()
         if stripped and path_exists(stripped):
             matches.append(canonicalize_path(stripped) or stripped)
-    return unique_strings(matches)
+    ordered = unique_strings(matches)
+    if is_windows():
+        ordered.sort(key=windows_executable_rank)
+    return ordered
 
 
 def extract_version(text: str, regex: str | None) -> str | None:

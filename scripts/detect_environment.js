@@ -32,7 +32,8 @@ const DEFAULT_TOOL_SPECS = {
   },
   maven: {
     label: 'Maven',
-    commands: ['mvn'],
+    commands_windows: ['mvn.cmd', 'mvn'],
+    commands_posix: ['mvn'],
     env_var_hint: 'MAVEN_HOME',
     env_var_suffix_windows: ['bin', 'mvn.cmd'],
     env_var_suffix_posix: ['bin', 'mvn'],
@@ -41,7 +42,8 @@ const DEFAULT_TOOL_SPECS = {
   },
   gradle: {
     label: 'Gradle',
-    commands: ['gradle'],
+    commands_windows: ['gradle.bat', 'gradle'],
+    commands_posix: ['gradle'],
     env_var_hint: 'GRADLE_HOME',
     env_var_suffix_windows: ['bin', 'gradle.bat'],
     env_var_suffix_posix: ['bin', 'gradle'],
@@ -56,19 +58,22 @@ const DEFAULT_TOOL_SPECS = {
   },
   npm: {
     label: 'npm',
-    commands: ['npm'],
+    commands_windows: ['npm.cmd', 'npm'],
+    commands_posix: ['npm'],
     version_command: ['{selected_executable}', '--version'],
     version_regex: '(\\d+\\.\\d+\\.\\d+)',
   },
   pnpm: {
     label: 'pnpm',
-    commands: ['pnpm'],
+    commands_windows: ['pnpm.cmd', 'pnpm'],
+    commands_posix: ['pnpm'],
     version_command: ['{selected_executable}', '--version'],
     version_regex: '([^\\s]+)',
   },
   yarn: {
     label: 'Yarn',
-    commands: ['yarn'],
+    commands_windows: ['yarn.cmd', 'yarn'],
+    commands_posix: ['yarn'],
     version_command: ['{selected_executable}', '--version'],
     version_regex: '([^\\s]+)',
   },
@@ -158,13 +163,15 @@ const DEFAULT_TOOL_SPECS = {
   },
   gem: {
     label: 'RubyGems',
-    commands: ['gem'],
+    commands_windows: ['gem.bat', 'gem'],
+    commands_posix: ['gem'],
     version_command: ['{selected_executable}', '--version'],
     version_regex: '([^\\s]+)',
   },
   bundler: {
     label: 'Bundler',
-    commands: ['bundle'],
+    commands_windows: ['bundle.bat', 'bundle', 'bundler.bat', 'bundler'],
+    commands_posix: ['bundle', 'bundler'],
     version_command: ['{selected_executable}', '--version'],
     version_regex: 'Bundler version\\s+([^\\s]+)',
   },
@@ -176,7 +183,8 @@ const DEFAULT_TOOL_SPECS = {
   },
   composer: {
     label: 'Composer',
-    commands: ['composer'],
+    commands_windows: ['composer.bat', 'composer'],
+    commands_posix: ['composer'],
     version_command: ['{selected_executable}', '--version'],
     version_regex: 'Composer version\\s+([^\\s]+)',
   },
@@ -247,7 +255,7 @@ const COMMON_PATH_MARKERS = [
   'kube',
 ];
 const PLATFORM_PATH_MARKERS = {
-  windows: ['windowsapps', 'nvm', 'nodejs'],
+  windows: ['windowsapps', 'nvm', 'nodejs', 'cargo', 'rustup', 'dotnet', 'scoop', 'chocolatey', 'msys', 'mingw', 'ruby', 'php'],
   macos: ['.nvm', '.pyenv', '.rbenv', '.sdkman', '.cargo', '.rustup', '/opt/homebrew', '/usr/local/bin'],
   linux: ['.nvm', '.pyenv', '.rbenv', '.sdkman', '.cargo', '.rustup', '/usr/local/bin', '/usr/lib/jvm', '/snap/bin'],
 };
@@ -397,11 +405,24 @@ function quoteWindowsArgument(value) {
     .replace(/(\\+)$/g, '$1$1')}"`;
 }
 
+function windowsExecutableRank(candidate) {
+  const extension = path.extname(String(candidate || '')).toLowerCase();
+  if (extension === '.exe') return 0;
+  if (extension === '.cmd') return 1;
+  if (extension === '.bat') return 2;
+  if (extension === '.com') return 3;
+  if (extension) return 4;
+  return 5;
+}
+
 function runCommand(command, options = {}) {
   const timeoutSeconds = options.timeout == null ? 8 : Number(options.timeout);
   try {
     let result;
-    if (detectOsFamily() === 'windows') {
+    const isWindows = detectOsFamily() === 'windows';
+    const executable = String(command[0] || '');
+    const isBatchFile = isWindows && /\.(cmd|bat)$/i.test(executable);
+    if (isBatchFile) {
       const commandText = command.map((item) => quoteWindowsArgument(item)).join(' ');
       result = spawnSync(process.env.ComSpec || 'cmd.exe', ['/d', '/s', '/c', commandText], {
         cwd: options.cwd || undefined,
@@ -410,7 +431,7 @@ function runCommand(command, options = {}) {
         timeout: timeoutSeconds * 1000,
       });
     } else {
-      result = spawnSync(command[0], command.slice(1), {
+      result = spawnSync(executable, command.slice(1), {
         cwd: options.cwd || undefined,
         encoding: 'utf8',
         windowsHide: true,
@@ -479,7 +500,11 @@ function resolveCommandMatches(commandName) {
       matches.push(canonicalizePath(stripped) || stripped);
     }
   }
-  return uniqueStrings(matches);
+  const ordered = uniqueStrings(matches);
+  if (detectOsFamily() === 'windows') {
+    ordered.sort((left, right) => windowsExecutableRank(left) - windowsExecutableRank(right));
+  }
+  return ordered;
 }
 
 function extractVersion(text, regex) {
