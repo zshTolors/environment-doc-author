@@ -1,0 +1,12 @@
+.idea/
+agents/
+
+/environment-baseline.json
+/ENVIRONMENT_POLICY.md
+/AGENTS.environment.md
+/SKILL.environment.md
+/tmp-environment-baseline*.json
+
+__pycache__/
+*.py[cod]
+.DS_Store
